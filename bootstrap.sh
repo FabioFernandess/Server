@@ -1,4 +1,5 @@
 #!/bin/sh
+
 export FLASK_APP=./server/index.py
 source $(pipenv --venv)/bin/activate
 service postgresql start
