@@ -1,1 +1,1 @@
-"# Server" 
+Executar bootstrap no terminal
