@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
 export FLASK_APP=./server/index.py
-source $(pipenv --venv)/bin/activate
-service postgresql start
+source "$(pipenv --venv)/bin/activate"
+
 flask run -h 0.0.0.0
