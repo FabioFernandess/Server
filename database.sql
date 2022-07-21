@@ -7,6 +7,7 @@ CREATE TABLE analise(
    nome_arquivo VARCHAR(255) NOT NULL,
    valor_padrao int,
    status_analise VARCHAR(1) NOT NULL,
+   data_analise timestamp default NULL
     id_fresadora INT,
    CONSTRAINT fk_fresadora
       FOREIGN KEY(id_fresadora) 
