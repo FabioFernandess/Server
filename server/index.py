@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 
 # Connect to your PostgreSQL database on a remote server
-conn = psycopg2.connect(host="localhost", port="5432", dbname="db_fres", user="postgres", password="fabio")
+conn = psycopg2.connect(host="localhost", port="5432", dbname="db_fres", user="user_fres", password="pass_fres")
 
 # Open a cursor to perform database operations
 cur = conn.cursor()
