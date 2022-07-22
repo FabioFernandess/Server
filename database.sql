@@ -14,6 +14,3 @@ CREATE TABLE analise(
 	  REFERENCES fresadora(id)
 );
 
-create user user_fres with encrypted password 'pass_fres';
-
-grant all privileges on database db_fres to user_fres;
