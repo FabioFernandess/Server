@@ -1,6 +1,6 @@
 CREATE DATABASE db_fres;
 
-CREATE TABLE fresadora (id SERIAL PRIMARY KEY, nome VARCHAR, valor INT);
+CREATE TABLE fresadora (id SERIAL PRIMARY KEY, nome VARCHAR not null, valor INT not null);
 
 CREATE TABLE analise(
    id SERIAL PRIMARY KEY,
