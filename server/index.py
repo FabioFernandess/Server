@@ -14,7 +14,7 @@ conn = None
 
 cur = None
 
-parent_dir = "/home"
+parent_dir = "/home/fresadora"
 
 
 def abrirConexao():
