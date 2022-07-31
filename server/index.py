@@ -163,10 +163,10 @@ def verificaDuplicidade(nome, id):
     conn = abrirConexao()
     cur = conn.cursor()
     if(id == None):
-        cur.execute("select * from fresadora where nome like '"+nome+"';")
+        cur.execute("select * from fresadora where nome like '%s';" % (nome))
     else:
-        cur.execute("select * from fresadora where nome like '" +
-                    nome+"' and id != %s;" % (id))
+        cur.execute(
+            "select * from fresadora where nome like '%s' and id != %s;" % (nome, id))
 
     retorno = []
     # Retrieve query results
@@ -185,10 +185,8 @@ def excluirFresadora(id):
     cur = conn.cursor()
 
     if(excluirDiretorio(id) == 200):
-        cur.execute(
-            "DELETE FROM analise WHERE id_fresadora = "+id+";")
-        cur.execute(
-            "DELETE FROM fresadora WHERE ID = "+id+";")
+        cur.execute("DELETE FROM analise WHERE id_fresadora = %s;" % (id))
+        cur.execute("DELETE FROM fresadora WHERE ID = %s;" % (id))
         conn.commit()
         cur.close()
         conn.close()
@@ -222,3 +220,5 @@ def excluirDiretorio(f):
     except OSError as error:
         print(error)
         return 400
+
+
