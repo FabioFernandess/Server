@@ -204,6 +204,8 @@ def criarDiretorio(f):
     path = os.path.join(parent_dir, id)
     try:
         os.mkdir(path)
+        analisados = os.path.join(path, 'Analisados')
+        os.mkdir(analisados)
         return 200
     except OSError as error:
         return 400

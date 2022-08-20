@@ -14,3 +14,6 @@ CREATE TABLE analise(
 	  REFERENCES fresadora(id)
 );
 
+ALTER TABLE analise ALTER COLUMN data_analise SET DEFAULT now();
+
+ALTER TABLE fresadora ADD COLUMN variavel varchar;
