@@ -4,6 +4,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import os
 import shutil
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -224,3 +225,31 @@ def excluirDiretorio(f):
         return 400
 
 
+@app.route('/getArquivo', methods=['POST'])
+def getArquivo():
+    conn = abrirConexao()
+    cur = conn.cursor()
+    data = request.json
+    id = data['id']
+    cur.execute("SELECT id_fresadora, nome_arquivo, valor_padrao, TO_CHAR(a1.data_analise, 'DD/MM/YYYY HH24:MI:SS'), nome FROM analise a1 inner join fresadora on a1.id_fresadora = fresadora.id WHERE data_analise = (SELECT max(data_analise) FROM analise a2 where a2.id_fresadora=a1.id_fresadora) and a1.id = %s;" % (id))
+    retorno = []
+    records = cur.fetchall()
+    cur.close()
+    conn.close()
+    
+    if len(records) > 0:
+        for x in records:
+            dado = {}
+            dado['id_fresadora'] = x[0]
+            dado['nome_arquivo'] = x[1]
+            dado['valor_padrao'] = x[2]
+            dado['data'] = x[3]
+            dado['nome_fresadora'] = x[4]
+            
+        with open('/home/fresadora/%s/Analisados/%s' % (dado['id_fresadora'],dado['nome_arquivo'])) as f:
+            json_data = json.load(f)
+
+        return jsonify({'data':dado['data'],'valor_padrao':dado['valor_padrao'],'nome_fresadora':dado['nome_fresadora'],'dados':json_data}),200
+    else:
+        return {}
+    
