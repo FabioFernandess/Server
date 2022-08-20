@@ -49,7 +49,7 @@ def buscarFresadora(id):
     cur = conn.cursor()
 
     cur.execute(
-        "SELECT f.id,f.nome,f.valor FROM fresadora f where f.id = "+id+";")
+        "SELECT f.id,f.nome,f.valor,f.variavel FROM fresadora f where f.id = "+id+";")
     # Retrieve query results
     records = cur.fetchall()
     dado = {}
@@ -57,6 +57,7 @@ def buscarFresadora(id):
         dado['id'] = x[0]
         dado['nome'] = x[1]
         dado['valor'] = x[2]
+        dado['variavel'] = x[3]
     cur.close()
     conn.close()
     return jsonify(dado)
@@ -72,7 +73,7 @@ def listaConfigFresadoras():
     conn = abrirConexao()
     cur = conn.cursor()
     cur.execute(
-        "SELECT f.id,f.nome,f.valor FROM fresadora f order by f.nome asc;")
+        "SELECT f.id,f.nome,f.valor,f.variavel FROM fresadora f order by f.nome asc;")
     retorno = []
     # Retrieve query results
     records = cur.fetchall()
@@ -81,6 +82,7 @@ def listaConfigFresadoras():
         dado['id'] = x[0]
         dado['nome'] = x[1]
         dado['valor'] = x[2]
+        dado['variavel'] = x[3]
         retorno.append(dado)
     cur.close()
     conn.close()
@@ -106,6 +108,8 @@ def buscarHistorico(id):
         dado['nome_fresadora'] = x[3]
         if x[1] == 'O':
             dado['status'] = 'OK'
+        if x[1] == 'E':
+            dado['status'] = 'ERRO'
         else:
             dado['status'] = 'ATENÇÃO'
         dado['data_analise'] = x[2]
@@ -128,7 +132,7 @@ def novaFresadora():
         return jsonify(test), 400
 
     cur.execute(
-        "INSERT INTO fresadora (nome,valor) VALUES(%s,%s) RETURNING id;", (dados['nome'], dados['valor']))
+        "INSERT INTO fresadora (nome,valor,variavel) VALUES(%s,%s,%s) RETURNING id;", (dados['nome'], dados['valor'], dados['variavel']))
 
     conn.commit()
     id = cur.fetchone()[0]
@@ -152,7 +156,7 @@ def editarFresadora():
     if(test['codeStatus'] == 400):
         return jsonify(test), 400
     cur.execute(
-        "update fresadora set nome = '%s', valor = %s where id = %s" % (dados['nome'], dados['valor'], dados['id']))
+        "update fresadora set nome = '%s', valor = %s, variavel = '%s'  where id = %s" % (dados['nome'], dados['valor'], dados['variavel'], dados['id']))
     conn.commit()
     cur.close()
     conn.close()
@@ -231,25 +235,25 @@ def getArquivo():
     cur = conn.cursor()
     data = request.json
     id = data['id']
-    cur.execute("SELECT id_fresadora, nome_arquivo, valor_padrao, TO_CHAR(a1.data_analise, 'DD/MM/YYYY HH24:MI:SS'), nome FROM analise a1 inner join fresadora on a1.id_fresadora = fresadora.id WHERE data_analise = (SELECT max(data_analise) FROM analise a2 where a2.id_fresadora=a1.id_fresadora) and a1.id = %s;" % (id))
-    retorno = []
+    cur.execute("SELECT id_fresadora, nome_arquivo, valor_padrao, TO_CHAR(a1.data_analise, 'DD/MM/YYYY HH24:MI:SS'), nome, status_analise FROM analise a1 inner join fresadora on a1.id_fresadora = fresadora.id WHERE data_analise = (SELECT max(data_analise) FROM analise a2 where a2.id_fresadora=a1.id_fresadora) and a1.id = %s;" % (id))
     records = cur.fetchall()
     cur.close()
     conn.close()
-    
+
     if len(records) > 0:
         for x in records:
             dado = {}
             dado['id_fresadora'] = x[0]
-            dado['nome_arquivo'] = x[1]
+            nome_arquivo = x[1]
             dado['valor_padrao'] = x[2]
             dado['data'] = x[3]
             dado['nome_fresadora'] = x[4]
-            
-        with open('/home/fresadora/%s/Analisados/%s' % (dado['id_fresadora'],dado['nome_arquivo'])) as f:
+            dado['status_analise'] = x[5]
+
+        with open('/home/fresadora/%s/Analisados/%s' % (dado['id_fresadora'], nome_arquivo)) as f:
             json_data = json.load(f)
 
-        return jsonify({'data':dado['data'],'valor_padrao':dado['valor_padrao'],'nome_fresadora':dado['nome_fresadora'],'dados':json_data}),200
+        dado['dados'] = json_data
+        return jsonify(dado), 200
     else:
         return {}
-    
