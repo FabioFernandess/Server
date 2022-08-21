@@ -28,7 +28,7 @@ def listarFresadoras():
     conn = abrirConexao()
     cur = conn.cursor()
 
-    cur.execute("SELECT f.id,f.nome,a.status_analise FROM fresadora f left join (SELECT * FROM analise a1 WHERE data_analise = (SELECT max(data_analise) FROM analise a2 where a2.id_fresadora=a1.id_fresadora)) a on a.id_fresadora = f.id order by f.nome asc;")
+    cur.execute("SELECT f.id,f.nome,a.status_analise FROM fresadora f left join (SELECT * FROM analise a1 WHERE data_analise = (SELECT max(data_analise) FROM analise a2 where a2.id_fresadora=a1.id_fresadora)) a on a.id_fresadora = f.id order by a.status_analise asc, f.nome asc;")
     retorno = []
     # Retrieve query results
     records = cur.fetchall()
