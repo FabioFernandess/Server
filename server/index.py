@@ -108,10 +108,11 @@ def buscarHistorico(id):
         dado['nome_fresadora'] = x[3]
         if x[1] == 'O':
             dado['status'] = 'OK'
-        if x[1] == 'E':
-            dado['status'] = 'ERRO'
-        else:
-            dado['status'] = 'ATENÇÃO'
+        else: 
+            if x[1] == 'E':
+                dado['status'] = 'ERRO'
+            else:
+                dado['status'] = 'ATENÇÃO'
         dado['data_analise'] = x[2]
         retorno.append(dado)
     cur.close()
