@@ -236,7 +236,7 @@ def getArquivo():
     cur = conn.cursor()
     data = request.json
     id = data['id']
-    cur.execute("SELECT id_fresadora, nome_arquivo, valor_padrao, TO_CHAR(a1.data_analise, 'DD/MM/YYYY HH24:MI:SS'), nome, status_analise FROM analise a1 inner join fresadora on a1.id_fresadora = fresadora.id WHERE data_analise = (SELECT max(data_analise) FROM analise a2 where a2.id_fresadora=a1.id_fresadora) and a1.id = %s;" % (id))
+    cur.execute("SELECT id_fresadora, nome_arquivo, valor_padrao, TO_CHAR(a1.data_analise, 'DD/MM/YYYY HH24:MI:SS'), nome, status_analise FROM analise a1 inner join fresadora on a1.id_fresadora = fresadora.id where  a1.id = %s;" % (id))
     records = cur.fetchall()
     cur.close()
     conn.close()
